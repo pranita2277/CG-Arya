@@ -1,0 +1,74 @@
+/* 12)Generate fractal patterns using Koch Curve.*/
+ #include <iostream>
+ #include <cmath>
+ #include <GL/glut.h>
+ #define M_PI 3.14159265358979323846
+ using namespace std;
+ // Global variables for input
+ double x, y, len, angle;
+ int it;
+ // Initialize OpenGL settings
+ void init() {
+ glClearColor(1.0, 1.0, 1.0, 0.0); // White background
+ glMatrixMode(GL_PROJECTION);
+ gluOrtho2D(0, 640, 0, 480);
+ }
+ // Function to draw a single line
+ // 2D coordinate system
+ void drawLine(double x1, double y1, double x2, double y2) {
+ glBegin(GL_LINES);
+ glVertex2d(x1, y1);
+ glVertex2d(x2, y2);
+ glEnd();
+ }
+ // Recursive Koch Curve function
+void koch(double x, double y, double len, double angle, int it) {
+ if (it == 0) {
+ double nx = x + len * cos(angle * M_PI / 180);
+ double ny = y + len * sin(angle * M_PI / 180);
+ drawLine(x, y, nx, ny);
+ return;
+ }
+ len /= 3;
+ koch(x, y, len, angle, it- 1);
+ x +=len * cos(angle * M_PI / 180);
+ y +=len * sin(angle * M_PI / 180);
+ koch(x, y, len, angle + 60, it- 1);
+ x +=len * cos((angle + 60) * M_PI / 180);
+ y +=len * sin((angle + 60) * M_PI / 180);
+ koch(x, y, len, angle- 60, it- 1);
+ x +=len * cos((angle- 60) * M_PI / 180);
+ y +=len * sin((angle- 60) * M_PI / 180);
+ koch(x, y, len, angle, it- 1);
+ }
+ // Display callback
+ void display() {
+ glClear(GL_COLOR_BUFFER_BIT); // Clear screen
+ glColor3f(0, 0, 0);
+ // Set drawing color to black
+ koch(x, y, len, angle, it); // Draw Koch curve
+ glFlush();
+ // Show the result
+ }
+ int main(int argc, char** argv) {
+ // Get user input
+ cout << "Enter starting point (x y): ";
+ cin >> x >> y;
+ cout << "Enter length and angle: ";
+ cin >> len >> angle;
+ cout << "Enter number of iterations: ";
+ cin >> it;
+ // Initialize GLUT
+ glutInit(&argc, argv);
+ glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+ glutInitWindowSize(640, 480);
+ glutInitWindowPosition(100, 100);
+ glutCreateWindow("Koch Curve");
+ init();
+ // Call initialization
+ glutDisplayFunc(display);
+ // Set display function
+// Start main loop
+ glutMainLoop();
+ return 0;
+ }
