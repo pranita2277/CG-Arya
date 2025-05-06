@@ -1,0 +1,66 @@
+/* 9) Implement DDA line drawing algorithm to draw Staircase line. Divide the
+ screen in four quadrants with center as (0, 0). The line should work for all the
+ slopes*/
+ #include <GL/glut.h>
+ #include <iostream>
+ #include <cmath>
+ using namespace std;
+ void init() {
+glClearColor(1, 1, 1, 1);
+ gluOrtho2D(-320, 320,-240, 240);
+ // White background
+ // Set coordinate system
+ }
+ void drawAxes() {
+ glColor3f(0, 0, 0); // Black
+ glBegin(GL_LINES);
+ glVertex2i(-320, 0);
+ glVertex2i(320, 0);
+ glVertex2i(0,-240);
+ glVertex2i(0, 240);
+ glEnd();
+ }
+ // DDA line drawing function
+ void drawDDA(int x1, int y1, int x2, int y2) {
+ float dx = x2- x1;
+ float dy = y2- y1;
+ int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+ float xInc = dx / steps;
+ float yInc = dy / steps;
+ float x = x1, y = y1;
+ glBegin(GL_POINTS);
+ for (int i = 0; i <= steps; ++i) {
+ glVertex2i(round(x), round(y));
+ x +=xInc;
+ y +=yInc;
+ }
+ glEnd();
+ }
+ // Draws a staircase starting from origin (0,0)
+ void drawStaircaseFromCenter(int steps, int size) {
+ glColor3f(1, 0, 0); // Red
+ int x = 0, y = 0;
+ for (int i = 0; i < steps; i++) {
+ drawDDA(x, y, x + size, y); // Horizontal
+ x +=size;
+ drawDDA(x, y, x, y + size); // Vertical
+ y +=size;
+ }
+ }
+ void display() {
+ glClear(GL_COLOR_BUFFER_BIT);
+ drawAxes();
+ drawStaircaseFromCenter(5, 30); // 5 steps of size 30
+ glFlush();
+}
+ int main(int argc, char** argv) {
+ glutInit(&argc, argv);
+ glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+ glutInitWindowSize(640, 480);
+ glutInitWindowPosition(100, 100);
+ glutCreateWindow("Centered DDA Staircase with Axes");
+ init();
+ glutDisplayFunc(display);
+ glutMainLoop();
+ return 0;
+ }
