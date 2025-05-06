@@ -1,0 +1,3 @@
+ Compile and Run commands:
+ Compile: g++ filename.cpp-o filename-lGL-lGLU-lglut
+ Run: ./filename
